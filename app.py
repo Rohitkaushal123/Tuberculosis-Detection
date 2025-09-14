@@ -1,18 +1,19 @@
 import os
-# Disable GPU (Streamlit Cloud has no GPU anyway)
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["CUDA_VISIBLE_DEVICES"] = ""     # no GPU on Streamlit Cloud
+os.environ["OPENCV_FORCE_HEADLESS"] = "1"   # prevents libGL.so.1 crash
 
 import streamlit as st
 import numpy as np
 import pydicom
-import cv2
 from PIL import Image
-from ultralytics import YOLO
 import tempfile
 import pandas as pd
-import torch
 
-# Prevent OpenCV / Torch multithread crashes
+# Import after setting env vars
+import cv2
+import torch
+from ultralytics import YOLO
+
 cv2.setNumThreads(1)
 torch.set_num_threads(1)
 
@@ -164,3 +165,4 @@ if uploaded:
             st.caption("Note: classification models cannot show location/boxes. Train a detection model to localize.")
     else:
         st.warning("Unsupported model type. Use a YOLO 'detect' (boxes) or 'classify' (probabilities) model.")
+
