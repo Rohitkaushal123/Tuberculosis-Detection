@@ -7,6 +7,12 @@ from ultralytics import YOLO
 import tempfile
 import pandas as pd
 
+import os, torch, cv2
+os.environ["CUDA_VISIBLE_DEVICES"] = ""   # disable GPU (no GPU in cloud)
+cv2.setNumThreads(1)                      # avoid multithreading crashes
+torch.set_num_threads(1)
+
+
 # ======== settings (tweak if needed) ========
 CONF_THR = 0.30          # lower => more sensitive (more positives)
 INFER_MAX_SIDE = 640     # long side resized to this for inference
@@ -155,3 +161,4 @@ if uploaded:
             st.caption("Note: classification models cannot show location/boxes. Train a detection model to localize.")
     else:
         st.warning("Unsupported model type. Use a YOLO 'detect' (boxes) or 'classify' (probabilities) model.")
+
