@@ -1,3 +1,7 @@
+import os
+# Disable GPU (Streamlit Cloud has no GPU anyway)
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 import streamlit as st
 import numpy as np
 import pydicom
@@ -6,12 +10,11 @@ from PIL import Image
 from ultralytics import YOLO
 import tempfile
 import pandas as pd
+import torch
 
-import os, torch, cv2
-os.environ["CUDA_VISIBLE_DEVICES"] = ""   # disable GPU (no GPU in cloud)
-cv2.setNumThreads(1)                      # avoid multithreading crashes
+# Prevent OpenCV / Torch multithread crashes
+cv2.setNumThreads(1)
 torch.set_num_threads(1)
-
 
 # ======== settings (tweak if needed) ========
 CONF_THR = 0.30          # lower => more sensitive (more positives)
@@ -124,7 +127,7 @@ if uploaded:
 
     # === PREDICT ===
     rgb_small, scale = shrink_with_scale(rgb_full, INFER_MAX_SIDE)
-    results = model.predict(source=rgb_small, conf=CONF_THR, verbose=False)
+    results = model.predict(source=rgb_small, conf=CONF_THR, verbose=False, device="cpu")
 
     if task == "detect":
         # gather all boxes from results (usually 1 image -> 1 result)
@@ -161,4 +164,3 @@ if uploaded:
             st.caption("Note: classification models cannot show location/boxes. Train a detection model to localize.")
     else:
         st.warning("Unsupported model type. Use a YOLO 'detect' (boxes) or 'classify' (probabilities) model.")
-
