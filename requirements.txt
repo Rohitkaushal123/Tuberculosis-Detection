@@ -1,6 +1,6 @@
 streamlit
 ultralytics
-opencv-python
+opencv-python-headless
 pillow
 numpy
 pandas
@@ -9,3 +9,4 @@ seaborn
 torch
 torchvision
 pydicom
+
